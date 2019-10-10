@@ -1,0 +1,69 @@
+数据库查询实现分页：
+
+Oracle中通过ROWNUM实现分页：
+    ROWNUM是一个伪列，在普通的查询中是不可见的，需要取出数据后ROWNUM才会有值。
+    ROWNUM只适用于小于或者小于等于，如果进行等于判断，那么只能等于1，不能进行大于的比较。
+    --以一页5条数据分页，查询出第二页
+    首先写法：
+        SELECT rn AS 序号, ename AS 姓名, sal AS 工资
+        FROM(
+            SELECT ROWNUM AS rn, sal, ename
+            FROM(
+                SELECT sal, ename, FROM emp WHERE sal IS NOT NULL order by sal
+            )
+        ) a
+        WHERE a.rn between 6 and 10
+    优化后的写法（效率较高，不需要在子查询中将结果全部查出来，首先使用终止行筛选子查询的结果）：
+         SELECT rn AS 序号, ename AS 姓名, sal AS 工资
+         FROM(
+             SELECT ROWNUM AS rn, sal, ename
+             FROM(
+                 SELECT sal, ename, FROM emp WHERE sal IS NOT NULL order by sal
+             )
+             WHERE ROWNUM <= 10
+         )
+         WHERE rn >= 6
+    其他（row_number()函数，不建议使用）:
+        select * from(
+            select t.*,row_number() over (order by t1.id) rowno from TABLE1
+        )
+        where rowno between 21 and 40;
+MySql提供了limit(start, length)函数，直接写到sql后面：
+    #返回前10行
+    select * from table where ... limit 10;
+
+    #返回前10行
+    select * from table where ... limit 0, 10;
+
+    #返回第11-30行
+    select * from table where ... limit 10, 20;
+SqlServer分页查询语句：
+    方法一：
+        select top 页大小 *
+        from table1
+        where id>
+              (select max (id) from
+                (select top ((页码-1)*页大小) id from table1 order by id) as T
+              )
+        order by id
+        例如：
+            SELECT TOP 10           --3、最后再取出前10条数据，这就是数据库中第41-50条数据（注意，id不是41-50，因为我删除了id为44、45的记录）
+                    *
+            FROM    dbo.a
+            WHERE   id NOT IN (     --2、然后搜出id不在前40之内的其它数据
+                    SELECT TOP 40   --1、按照id排序之后先搜出前40条数据
+                            id
+                    FROM    dbo.a
+                    ORDER BY id )
+            ORDER BY id;
+        注意：使用TOP要求主键必须唯一，不能是联合主键。如果是联合主键，则查询出的结果会乱序的。
+    方法二：使用Row_Number
+        SELECT TOP 10
+                *
+        FROM    ( SELECT    ROW_NUMBER() OVER ( ORDER BY id ) AS rownumber ,
+                            *
+                  FROM      a
+                ) A
+        WHERE   rownumber > 40;
+    方法三：SQLServer2012新具有的分页功能 OFFSET x ROW FETCH NEXT y ROWS ONLY：
+        select id from a Order by id Offset 0 Row Fetch Next 5 Rows Only.

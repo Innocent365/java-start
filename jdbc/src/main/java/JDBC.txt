@@ -1,0 +1,45 @@
+JDBC:java Database Connectivity:java访问数据库的解决方案：希望用相同的方式访问不同的数据库，以实现与具体数据库无关的java操作界面
+	连接数据库的过程：
+		1.加载驱动类(不同的数据库字符串内容不同)
+		2.通过DriverManager负责加载驱动并建立与数据库的连接 （数据库地址，用户名密码来连接数据库）		
+			(不同的数据库地址格式不同)
+			连接成功返回Connection对象
+		3.通过创建Connection创建Statement对象，以及负责事务的管理
+		4.通过Statement对象执行SQL语句，发送给数据库并得到返回结果，
+			若是DML则返回一个数字，表示影响了数据库多少条数据，若是DQL，则会返回查询结果集
+		5.若有查询结果集则会返回ResultSet对象，通过遍历该对象来获取结果集内容
+		
+	1.加载驱动类：
+		oracle.jdbc.driver.OracleDriver
+		com.mysql.jdbc.Driver
+		org.sqlite.JDBC
+			 
+	2.创建Connection对象，通过DriverManager根据数据库地址用户名密码来连接数据库	
+		DriverManager的静态方法
+			getConnection在建立于数据库连接时
+			要求传入三个参数：
+			1:数据库地址:	jdbc:oracle:thin:@host:port:sid			jdbc:oracle:thin:@192.168.201.201:1521:orcl
+							jdbc:mysql://host:3306					jdbc:mysql://localhost:3306
+							jdbc:sqlite:info.db
+			2:数据库用户名
+			3:数据库密码
+	3.创建Statement对象，通过Connection对象
+	4.通过Statement对象执行SQL语句，发送给数据库并返回结果
+			Statement对于执行不同种类的SQL语句，提供了相关的方法:
+			1:ResultSet executeQuery(String sql) 该方法用来执行SELECT语句，返回为值为查询 的结果集
+			2:int executeUpdate(String sql) 该方法用来执行DML语句，返回值为影响了数据库 多少条数据
+			3:boolean execute(String sql) 什么SQL语句都可以执行，但DML与DQL语句都有 单独的方法，所以该方法通常用来执行DDL等 操作。
+				返回为:若执行完SQL语句后有查询结果集就返回true，否则返回false.  
+					
+====================	
+-----mysql------
+	<property name="driver" value="com.sqlserver.jdbc.Driver" />
+	<property name="url" value="jdbc:mysql:///empdb"/>
+	<property name="username" value="root" />
+	<property name="password" value="0.123abcd" />
+
+-----mssql------	
+	<property name="driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+	<property name="url" value="jdbc:sqlserver://localhost:1433;"/>
+	<property name="username" value="sa" />
+	<property name="password" value="123" />

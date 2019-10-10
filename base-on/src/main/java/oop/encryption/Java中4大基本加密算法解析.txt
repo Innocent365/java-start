@@ -1,0 +1,46 @@
+简单的java加密算法：
+	1.BASE64：属于编码格式，而非加密算法
+	2.MD5(Message Digest algorithm 5, 信息摘要算法)
+	3.SHA(Secure Hash Algorithm, 安全散列算法)
+	4.HMAC(Hash Message Authentication Code, 散列消息鉴别码)
+	
+1.BASE64：
+	网络上最常见的用于传输8Bit字节代码的编码方式之一。
+	Base64编码可用于在HTTP环境下传递较长的标识信息。
+	例如，在Java Persistence系统Hibernate中，就采用了Base64来将一个较长的唯一标识符（一般为128-bit的UUID）编码为一个字符串，
+	用作HTTP表单和HTTP GET URL中的参数。
+	在其他应用程序中，也常常需要把二进制数据编码为适合放在URL（包括隐藏表单域）中的形式。
+	>>> new BASE64Decoder().decodeBuffer(key); 		// BASE64解密
+		new BASE64Encoder().encodeBuffer(key);		// BASE64加密，其中key为byte[]类型
+	
+2.MD5：
+	广泛用于加密和解密技术，常用于文件校验，不管文件多大，经过MD5后都能生成唯一的MD5值。
+		>>> MessageDigest messageDigest = MessageDigest.getInstance("MD5");  	//"SHA"
+			messageDigest.update(inputData);
+			String result = new BigInteger(messageDigest.digest()).toString();
+	
+	具有以下特点：
+		a.压缩性: 任意长的数据，算出的Md5值长度都是固定的.
+		b.抗修改：改动一个1字节，所得到的MD5值都有很大差别。
+		c.弱抗碰撞：要想找到一个相同MD5值的数据非常困难, 破译困难。
+		d.强抗碰撞：要找到两个不同的数据，使他们具有相同的Md5值，非常困难。
+	MD5的作用是让大容量信息在用数字签名软件签署私人密钥前被”压缩”成一种保密的格式（就是把一个任意长度的字节串变换成一定长的十六进制数字串）。除了MD5以外，其中比较有名的还有sha-1、RIPEMD以及Haval等。
+
+3.SHA:
+	安全哈希算法（Secure Hash Algorithm）主要试用于数字签名标准（Digital Signature Standard, DSS）里面定义的数字签名算法（Digital Signature Algorithm， DSA）。
+	与MD5的比较：
+		1.对强行攻击的安全性：最显著和最重要的区别是SHA-1摘要比MD5摘要长32 位。
+		使用强行技术，产生任何一个报文使其摘要等于给定报摘要的难度对MD5是2^128数量级的操作，而对SHA-1则是2^160数量级的操作。
+		这样，SHA-1对强行攻击有更大的强度。
+		2.对密码分析的安全性：由于MD5的设计，易受密码分析的攻击，SHA-1显得不易受这样的攻击。
+		3.速度：在相同的硬件上，SHA-1的运行速度比MD5慢
+
+4.HMAC:
+	用公开函数和密钥产生一个固定长度的值作为认证标识，用这个标识鉴别消息的完整性。
+	使用一个密钥生成一个固定大小的小数据块，即MAC，并将其加入到消息中，然后传输。接收方利用与发送方共享的密钥进行鉴别认证等。
+	
+	
+	
+	
+	
+		

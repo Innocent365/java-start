@@ -1,0 +1,82 @@
+Oracle官方对反射的解释是:
+        Reflection enables Java code to discover information about the fields, methods and constructors of loaded classes,
+    and to use reflected fields, methods, and constructors to operate on their underlying counterparts, within security restrictions.
+
+        The API accommodates applications that need access to either the public members of a target object (based on its runtime class)
+    or the members declared by a given class. It also allows programs to suppress default reflective access control.
+通过反射，我们可以在运行时获得程序或程序集中每一个类型的成员和成员的信息。
+程序中一般的对象的类型都是在编译期就确定下来的，而Java反射机制可以动态地创建对象并调用其属性，这样的对象的类型在编译期是未知的。
+所以我们可以通过反射机制直接创建对象，即使这个对象的类型在编译期是未知的。
+
+Java反射框架java.lang.relfect主要提供以下功能：
+    1.在运行时判断任意一个对象所属的类；
+    2.在运行时构造任意一个类的对象；
+    3.在运行时判断任意一个类所具有的成员变量和方法（通过反射甚至可以调用private方法）；
+    4.在运行时调用任意一个对象的方法
+
+用途：反射最重要的用途就是开发各种通用框架。
+
+
+反射的基本运用：
+    1.获得Class对象
+    2.判断是否为某个类的实例
+    3.创建实例
+    4.获取方法
+    5.获取构造器信息
+    6.获取类的成员变量（字段）信息
+    7.调用方法
+    8.利用反射创建数组
+
+注意事项
+    由于反射会额外消耗一定的系统资源，因此如果不需要动态地创建一个对象，那么就不需要用反射。
+    另外，反射调用方法时可以忽略权限检查，因此可能会破坏封装性而导致安全问题。
+
+
+
+invoke方法：
+    @CallerSensitive
+    public Object invoke(Object obj, Object... args)
+        throws IllegalAccessException, IllegalArgumentException,
+           InvocationTargetException
+    {
+        if (!override) {
+            if (!Reflection.quickCheckMemberAccess(clazz, modifiers)) {
+                Class<?> caller = Reflection.getCallerClass();
+                checkAccess(caller, clazz, obj, modifiers);
+            }
+        }
+        MethodAccessor ma = methodAccessor;             // read volatile
+        if (ma == null) {
+            ma = acquireMethodAccessor();
+        }
+        return ma.invoke(obj, args);
+    }
+    1.权限检查
+    2.调用MethodAccessor的invoke方法
+
+
+=============
+https://www.sczyh30.com/posts/Java/java-reflection-1/
+
+
+
+反射的原理：
+1.什么是类加载器？作用是什么？
+    用来加载通过javac编译成的.ckass的字节文件，jvm虚拟机当中的类加载器负责加载这些类字节文件，
+    先是经过一系列的处理，然后再缓存到我们的JVM虚拟机中，供程序随时使用
+2.反射的基础---> Class类(java.lang.Class)，如何理解Class类
+    小写的class是声明一种类型，
+    Class   描述java类的组成成分, 不能实例化
+3.Class类里面的内容
+    描述java类的名字
+    描述java类的属性
+    来自哪个包
+    父类
+    构造方法
+    普通方法
+4.class实例化的方式（将加载到虚拟机的模板字节，创造出一个实际对象出来）？
+    a.Class类的forName("包名")方法
+    b.类的.class方法
+    c.某个对象的getClass()方法
+5.反射的总结
+    反射就是把Java类中的组成部分映射成响应的java对象，字节模板

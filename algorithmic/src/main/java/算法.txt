@@ -1,0 +1,21 @@
+排序算法（Sorting algorithm）是一种能将一串数据依照特定排序方式进行排列的一种算法.
+	1.输出结果为递增序列（递增是针对所需的排序顺序而言）
+	2.输出结果是原输入的一种排列、或是重组
+依据排序的方法：插入、交换、选择、合并等等。
+
+冒泡排序(Bubble Sort):	
+	冒泡排序对 {\displaystyle n} n个项目需要O( {\displaystyle n^{2}} n^{2})的比较次数，且可以原地排序。
+	
+	//使用python进行冒泡排序 ？
+	
+	
+	//Java
+	for(i=0;i<list.length;i++){
+		for(j=0;j<list.length-i-1;j++){	//j=i
+			if(list[j]>list[j+1]){
+				int a = list[j];
+				list[j] = list[j+1];
+				list[j+1] = a;
+			}
+		}	
+	}

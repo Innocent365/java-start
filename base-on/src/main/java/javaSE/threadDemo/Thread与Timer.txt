@@ -1,0 +1,210 @@
+线程：
+	一个线程是进程的一个顺序执行流
+	同类的多个线程共享一块存储空间和一组系统资源，线程本身有一个供程序执行的堆栈。
+		线程在切换时负荷小，因此，线程也被称为轻负荷进程。
+		一个进程中可以包含多个线程。
+	进程与线程的区别:
+		一个进程至少有一个线程。	线程的划分尺度小于进程，使得多线程程序的并发性高。另外，进程在执行过程中拥有独立的内存单元，而多个
+				线程共享内存，从而极大的提高了程序的运行效率。	
+		线程在执行过程中与进程的区别在于每个独立的线程有一个程序运行的入口、顺序执行序列和程序的入口。
+				但是线程不能独立执行，必须依存在应用程序中，由程序提供多个线程执行控制。
+		多线程的意义在于一个应用程序中，有多个执行部分可以同时执行。但操作系统并没有将多个线程看作多个独立的
+				应用来实现进程的调度和管理以及资源分配。	
+	线程使用的场合:
+		线程通常用于在一个程序中需要同时完成多个任务的情况.我们可以将每个任务定义为一个线程,使得他们同时工作.
+		也可以用于在单一线程中可以完成,但是使用多线程可以更快的情况,比如下载文件.
+	
+	并发原理：
+		并不是严格意义上的“同时”运行，OS把时间划分为很多时间片段
+	
+	为什么要用线程池
+		线程池是指在初始化一个多线程应用程序过程中创建一个线程集合，然后在需要执行新的任务时重用这些线程而不是新建一个线程。
+		1、线程池改进了一个应用程序的响应时间。由于线程池中的线程已经准备好且等待被分配任务，应用程序可以直接拿来使用而不用新建一个线程。
+		2、线程池节省了CLR 为每个短生存周期任务创建一个完整的线程的开销并可以在任务完成后回收资源。
+		3、线程池根据当前在系统中运行的进程来优化线程时间片。
+		4、线程池允许我们开启多个任务而不用为每个线程设置属性。
+		5、线程池允许我们为正在执行的任务的程序参数传递一个包含状态信息的对象引用。
+		6、线程池可以用来解决处理一个特定请求最大线程数量限制问题。
+	
+	1.创建线程
+		方式一：定义一个类，继承Thread，重写Run方法
+					public class TestThread extends Thread{
+						@Override
+						public void run(){
+							for(int i=0;i<100;i++){
+								System.out.println("我是线程");
+							}
+						}
+					}
+					Thread thread = new TestThread();
+					thread.start();
+		方式二：实现Runable接口，并定义线程要执行的任务
+					好处在于可以将线程与线程要执行的任务分离开减少耦合，同时Java是单继承的，
+						定义一个类实现Runable接口这样的做法可以更好的去实现其他父类或接口。
+						因为接口可以多继承。
+					public class testRunnable implements Runnable{
+						@Override
+						public void run(){
+							for(int i=0;i<100;i++){
+								System.out.println("我也是线程");
+							}
+						}
+					}					
+					Runnable runnable = new testRunnable();
+					Thread thread = new Thread(runnable);		
+	匿名内部类创建线程:
+		使用该方式可以简化编写代码的复杂度，当一个线程仅需要一个实例时使用
+				Thread thread = new Thread(){
+						public void run(){
+							//线程体
+						}
+				};				
+				Runnable runnable = new Runnable(){
+					public void run(){
+						//线程体
+					}
+				};
+				
+		注意：启动线程不要去直接调用线程的run方法，因为该方法是线程要执行的任务。
+				而我们要调用的是start方法。该方法的作用是将当前线程纳入到线程调度中，
+				使其具有可以并发执行的能力。start方法调用完毕后，线程处于runnable状态。
+				只要它被分配了CPU的时间片，就会开始运行，这时它会自动调用run方法。
+	API：
+		Thread的静态方法currentThread()方法用于获取运行当前代码片段的线程。
+			Thread current = Thread.currentThread();
+		获取线程信息：
+			long getId():返回该线程的标识符
+			String getName()
+			int getPriority()返回线程的优先级
+			Thread.state getState()获取线程的状态
+			boolean isAlive()测试线程是否处于活动状态
+			boolean isDaemon()测试线程是否为守护线程
+			boolean isInterruputed()测试线程是否已经中断
+			
+	线程优先级：
+		线程的切换是由线程调度控制的，我们无法通过代码来干涉，
+			但是我们可以通过提高线程的优先级来最大程度的改善线程获取时间片的几率。
+		线程的优先级被划分为1~10级，1最低，10最高
+			Thread.MIN_PRIORITY,
+			Thread.MAX_PRIORITY,
+			THread.NORM_PRIORITY
+				void setPriority(int priority):设置线程的优先级(参数值不是1~10会报非法参数异常IllegalArguementException)
+		守护线程：
+			void setDaemon(boolean)
+			当参数为true时该线程为守护线程，
+			守护线程的特点是：当进程中只剩下守护线程时，所有守护线程强制终止
+				GC就是运行在守护线程上的
+		sleep：用于使当前线程进入阻塞状态：-static void sleep(long ms) throws InterruptException,
+		yield: static void yield():用于使当前线程主动让出时间片然后再次回到Runnable状态
+		join：void join():等待当前线程结束	throws InterruptException
+--------------------------------------------------
+sleep与yield的区别：
+	yield方法只是让出给自己的CPU时间片，并且会立即进入Runable状态参与CPU时间的竞争，若程序中没有其他线程，
+			那么该线程马上就开始往下执行；
+	sleep会进入Block状态，等待时间结束事件的发生，然后进入Runable状态参与CPU事件的竞争。
+--------------------------------------------------
+sleep与wait的 区别：
+	sleep()方法是线程类（Thread）的方法，导致此线程暂停执行指定时间，把执行机会留给其他线程，
+			但是监控状态依然保持，到时会自动恢复。调用sleep不会释放对象锁。
+	wait()是Object类的方法，对象调用wait方法导致本线程放弃对象锁，进入等待此对象的等待锁定池，
+			只有针对此对象发出notify()方法或notifyAll()后本线程才进入对象锁定池准备获得对象锁进入运行状态。
+		
+	线程同步：
+		synchronized关键字：多个线程并发读写同一个临界资源时会发生“线程并发安全问题”
+		常见的临界资源：
+			多线程共享实例变量
+			多线程共享静态公共变量
+		线程安全问题：
+				同步操作：多线程并发的操作，各干各的
+				异步操作：有先后顺序的操作，你干完我干
+		锁机制：
+				Java提供了一种内置的锁机制来支持原子性
+				同步代码块(synchronized 关键字)：作为锁的对象的引用，一个作为由这个锁保护的代码块
+					synchronized(同步监视器-锁对象引用){
+						//代码块
+					}
+					若方法所有代码都需要同步也可以给方法直接加锁
+					每个Java对象都可以用作一个实现同步的锁，线程进入同步代码块之前会自动获得锁，
+						并且在退出同步块时自动释放锁。无论是正常退出还是抛出异常退出都一样。
+					获得内置锁的唯一途径就是进入由这个锁保护的同步代码块或方法。
+				选择合适的锁对象
+				选择合适的锁范围
+				静态方法锁
+				
+	synchronized修饰方法,该方法就是一个同步方法了.
+			多个线程调用时不会同时进到方法内部.
+			需要注意的是synchronized一定会给一个对象上锁.在这里,锁的是当前方法所属的对象.
+			也就是上面main方法中创建的table实例.
+			由于两个线程调用的是同一个table的getbean方法,所以两个线程不能同时进到方法内部.
+		
+	wait和notify：如果条件不满足，则等待。当条件满足时，等待该条件的线程将被唤醒。
+			
+	synchronized的一个问题
+			
+Timer:可以按计划执行重复的任务或者定时执行指定任务，
+	Timer 内部利用了一个后台线程 TimerThread 有计划地执行指定任务。可以调度一个任务运行一次或定期循环运行。 
+	TimerTask：一个抽象类，它实现了 Runnable 接口。我们需要扩展该类以便创建自己的 TimerTask ，这个 TimerTask 可以被 Timer 调度。
+		
+	构造方法：
+		Timer();
+		Timer(boolean isDaemon);
+		Timer(String name);
+		Timer(String name, boolean isDaemon);
+	调度：
+		schedule(TimerTask task, Date time) 指定的时间执行					//这里所说时间都是跟系统时间相关的绝对时间，而不是相对时间，所以它对系统时间的改变非常敏感
+		schedule(TimerTask task, long delay) 指定延迟
+		
+		schedule(TimerTask task, Date firstTime, long period) 指定首次，间隔执行
+		schedule(TimerTask task, long delay, long period) ：间隔时间重复执行			
+		//最终都是调用了  sched(TimerTask task, long time, long period) 方法			
+			
+		scheduleAtFixedRate：scheduleAtFixedRate 与 schedule 相同，他们的区别仅仅是传入 sched 方法 period 参数正负数的差别
+			scheduleAtFixedRate(TimerTask task, Date firstTime, long period)
+			scheduleAtFixedRate(TimerTask task, long delay, long period)
+		//Timer 类保证多个线程可以共享单个 Timer 对象而无需进行外部同步，是线程安全的。		
+		
+		Timer timer = new Timer("Test-Timer");
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				System.out.println("Timer test");
+			}
+		}, 0, 1000);
+	其他：
+		public void cancel();      // 丢弃全部任务，终止定时器
+		public int purge();        // 删除任务队列中所有被取消的任务
+	涉及到的类：
+		TimerTask：任务类
+		TaskQueue：任务队列，该队列为平衡二叉堆
+		TimerThread：执行任务的线程
+
+	TimerThread继承于Thread，用于执行队列中的任务。
+		该线程启动后，会不断从任务队列中获取任务执行，且每次执行周期性任务前，会先更新任务的下一次执行时间。
+	TimerTask 类是一个抽象类,实现 Runnale 接口,有一个抽象方法 run() 方法.
+		nextExecutionTime 属性： 是指下次任务的执行时间，时间格式是按照 System.currentTimeMillis 返回的。
+		period 属性是用来表示以毫秒为时间单位的重复任务，period 为正值时表示固定速率执行，负值表示固定延迟执行，值 0 表示一个非重复性的任务。
+		boolean cancel()：取消此计时器任务。
+		long scheduledExecutionTime()：返回此任务最近实际执行的安排执行时间。
+		TaskQueue：
+			TaskQueue是使用数组（TimerTask[] queue）实现的平衡二叉堆（balanced binary heap），数组的第一个元素没有使用，因此元素queue[n]的两个孩子为queue[2n]和queue[2n+1]。
+			数组的默认大小为128，当数组满时，会重新申请2倍于数组长度的空间，并将数组元素复制到新数组空间中。堆按照任务的下一次执行时间进行排序（小根堆），每次添加或删除任务时，会对堆进行调整。
+		固定速率执行: 直接按照计划的速率重复执行，不会考虑前面任务是否执行完。
+		固定延迟执行: 定时任务会因为前一个任务的延迟而导致其后面的定时任务延时
+	
+使用 ScheduledExecutorService 代替 Timer ：				
+	1.ScheduledThreadPoolExecutor 则是基于相对时间，对系统时间不敏感
+	2.Timer 是内部是单一线程，而 ScheduledThreadPoolExecutor 内部是个线程池，所以可以支持多个任务并发执行。
+	3.Timer 运行多个 TimeTask 时，只要其中之一没有捕获抛出的异常，其它任务便会自动终止运行，使用 ScheduledExecutorService 则没有这个问题。
+	4.使用 ScheduledExecutorService 更容易明确任务实际执行策略，更方便自行控制。
+	5.Timer 执行线程不是 daemon守护 线程, 任务执行完，主线程（或其他启动定时器的线程）结束时，task 线程并没有结束。需要注意潜在内存泄漏问题
+	
+	
+	
+	
+
+
+
+
+					
+					
+					
