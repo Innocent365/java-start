@@ -22,6 +22,6 @@ public class iocDemo {
         collection.add("动脑学院2");
         collection.add("动脑学院3");
 
-        //System.out.println(className);
+        System.out.println(className);
     }
 }
