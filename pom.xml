@@ -29,7 +29,7 @@
         <module>jdbc</module>
         <module>concurrence</module>
         <module>web-services</module>
-        <module>mytomcat</module>
+        <module>my-tomcat</module>
     </modules>
 
 

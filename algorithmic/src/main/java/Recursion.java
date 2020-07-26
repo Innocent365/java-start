@@ -4,7 +4,6 @@ public class Recursion {
     public static void main(String[] args) {
         //System.out.println(factorial(5));
 
-
         //要求返回 1! + 2! + 3! + 4!
         int result =0 ;
         for (int i = 1; i < 6; i++) {

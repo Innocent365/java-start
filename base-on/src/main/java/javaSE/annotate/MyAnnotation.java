@@ -25,3 +25,9 @@ public @interface MyAnnotation {
     String[] array = {"first","second","third"};
 
 }
+
+class EnumTest {
+    enum TrafficLamp {
+        Yellow, Green, Red;
+    }
+}

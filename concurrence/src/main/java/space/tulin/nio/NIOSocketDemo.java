@@ -11,7 +11,9 @@ import java.util.Iterator;
  */
 public class NIOSocketDemo {
 
-    private Selector selector;  //通道选择器（管理器）
+    /** 通道选择器（管理器） */
+    private Selector selector;
+
 
     public void initServer(int port) throws IOException {
         ServerSocketChannel serverChannel = ServerSocketChannel.open();

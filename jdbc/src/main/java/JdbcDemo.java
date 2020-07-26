@@ -30,10 +30,12 @@ public class JdbcDemo {
     public Connection getConn() {
         Connection connection = null;
         try {
+
+            /** 1.加载数据库连接驱动 */
             Class.forName("com.mysql.jdbc.Driver");   //要求JVM查找并加载指定的类，如果在类中有静态初始化器的话，JVM必然会执行该类的静态代码段。
 
-            //加载驱动类的字符串不同的数据库, 内容不同
-            String url = "jdbc:mysql://vva.space:3306/hwq";
+            /** 2.获取数据连接对象  */
+            String url = "jdbc:mysql://vva.space:3306/hwq";//不同的数据库, 内容不同
 
             /*
              * DriverManager的静态方法 getConnection在建立于数据库连接时
@@ -44,11 +46,9 @@ public class JdbcDemo {
              */
             connection = DriverManager.getConnection(url, "sa", "123");
             System.out.println("成功连接数据库!");
-            /*
-             * Connection的方法
-             * Statement createStatement()
-             * 可以创建用来执行SQL语句的Statement
-             * 对象。
+            /**
+             * 3.Connection的方法  Statement createStatement()
+             * 创建用来执行SQL语句的 Statement 或 PreparedStatement  对象。
              */
 
         } catch (ClassNotFoundException e) {
@@ -68,7 +68,7 @@ public class JdbcDemo {
         String sql = "SELECT empno,ename,sal,deptno FROM emp";
         System.out.println(sql);
 
-        //执行查询语句并获取查询结果集
+        /** 4.执行语句并获取结果集 */
         ResultSet rs = state.executeQuery(sql);
 
         /*
@@ -86,6 +86,7 @@ public class JdbcDemo {
             System.out.println(empno + "," + ename + "," + sal + "," + deptno);
         }
 
+        /** 5.关闭结果集、关闭会话、关闭连接 */
         rs.close();
         state.close();
         conn.close();
@@ -218,11 +219,16 @@ public class JdbcDemo {
 
         try {
             Connection conn = DBUtil.getConnection();
-            /*
-             * PreparedStatement preparedStatement(String sql)
-             * 该方法用来获取一个可以执行预编译SQL语句
-             * 的Statement。
-             * PreparedStatement是Statement的子类。
+            /**
+             * PreparedStatement是Statement的子类，继承了 Statement 的所有功能 。
+             *          在任何时候都不要使用 Statement。
+             *
+             * 获取： PreparedStatement preparedStatement(String sql)
+             *
+             * 优点： 1.相同的预编译语句再次被调用不会再次需要 编译。所以其执行速度要快于 Statement 对象
+             *      2.sql可读性和可维护性 比Statement要好
+             *      3.提高了安全性.Statement 容易被 SQL 注入，
+             *          而 PreparedStatement 传入的内容不会和 sql 语句发生任何匹配关系。
              */
             PreparedStatement ps = conn.prepareStatement(sql);
 

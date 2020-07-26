@@ -1,0 +1,16 @@
+1.java 1.5里程碑的变化：
+	支持泛型
+	支持自动拆装箱
+	支持枚举（Enumerations）类型
+	可变参数函数（Varargs）	public void doSomething(String... params)
+	强化 for each 循环
+2.java 1.7的变化;	
+	支持switch字符串
+3.java 1.8 
+	支持lambda表达式
+	函数式编程的写法delegate
+	Function<T,R>
+	BiConsumer<T,U>
+4.java 10
+	支持var
+

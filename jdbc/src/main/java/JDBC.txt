@@ -30,7 +30,9 @@ JDBC:java Database Connectivity:java访问数据库的解决方案：希望用�
 			2:int executeUpdate(String sql) 该方法用来执行DML语句，返回值为影响了数据库 多少条数据
 			3:boolean execute(String sql) 什么SQL语句都可以执行，但DML与DQL语句都有 单独的方法，所以该方法通常用来执行DDL等 操作。
 				返回为:若执行完SQL语句后有查询结果集就返回true，否则返回false.  
-					
+	5.关闭结果集，关闭会话、关闭连接
+
+
 ====================	
 -----mysql------
 	<property name="driver" value="com.sqlserver.jdbc.Driver" />

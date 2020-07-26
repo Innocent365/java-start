@@ -1,7 +1,18 @@
 package oop;
 //匿名内部类
-public class InnerClassDemo {
+public class InnerClassDemo  {
+
+	class InnerClass {
+		//内部类需要在外部类实例化后才能实例化，其语法看起来挺诡异的。
+	}
+
+	//TODO 完善内部类与匿名内部类
 	public static void main(String[] args) {
+
+		//new InnerClass();//编译错误， 不能再静态方法中直接new内部类，必须现有外部对象实例
+		new InnerClassDemo().new InnerClass();//这样子可以有
+
+
 		/*
 		//编译错误，接口不能被实例化
 		//Inter2 o = new Inter2();
@@ -56,9 +67,13 @@ public class InnerClassDemo {
 
 		Internel2 o5 = new Internel2(){
 		};
-		
-		
-		
+	}
+
+	/**
+	 * 普通类中也可以定义接口
+	 */
+	interface Climb{
+
 	}
 }
 

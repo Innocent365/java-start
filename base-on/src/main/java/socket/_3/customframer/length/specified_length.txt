@@ -1,0 +1,3 @@
+https://www.cnblogs.com/yiwangzhibujian/p/7107785.html
+先指定后续命令的长度，然后读取指定长度的内容做为客户端发送的消息。
+
